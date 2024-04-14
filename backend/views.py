@@ -1,13 +1,15 @@
 # from django.shortcuts import render
 
 # Create your views here.
-from backend.models import Music
-from backend.serializers import MusicSerializer
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
-from rest_framework import viewsets
-
-
-# Create your views here.
-class MusicViewSet(viewsets.ModelViewSet):
-    queryset = Music.objects.all()
-    serializer_class = MusicSerializer
+@require_http_methods(["GET"])
+def show_books(request):
+    data = {
+        'name': 'John Doe',
+        'age': 30,
+        'email': 'john.doe@example.com'
+    }
+    response = JsonResponse(data, status=200)
+    return response

@@ -1,12 +1,6 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-
-from backend import views
-
-
-router = DefaultRouter()
-router.register('bakcend', views.MusicViewSet)
+from django.urls import path
+from backend.views import show_books
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("add_book", show_books, ),
 ]
