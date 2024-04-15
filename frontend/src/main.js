@@ -1,4 +1,15 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+import ElementPlus from 'element-plus'
+import "element-plus/dist/index.css"
+import router from './router'
+import axios from 'axios'
+
+
+const app = createApp(App)
+
+app.config.globalProperties.$axios = axios
+
+app.use(router).use(ElementPlus).mount('#app')
+

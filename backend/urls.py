@@ -1,6 +1,8 @@
 from django.urls import path
-from backend.views import show_books
+from backend.views import works, data_test
 
 urlpatterns = [
-    path("add_book", show_books, ),
+    path("works", works),
+    path("data_test", data_test),
+
 ]
