@@ -1,15 +1,14 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import 'flowbite';
 
-import ElementPlus from 'element-plus'
-import "element-plus/dist/index.css"
+import './assets/css/tailwind.css'
+
 import router from './router'
 import axios from 'axios'
-
 
 const app = createApp(App)
 
 app.config.globalProperties.$axios = axios
-
-app.use(router).use(ElementPlus).mount('#app')
+app.use(router).mount('#app')
 
