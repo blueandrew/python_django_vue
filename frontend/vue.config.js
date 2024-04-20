@@ -11,10 +11,11 @@ module.exports = defineConfig({
       })
     ],
   },
-   pages: {
+  pages: {
     index: {
       entry: "src/main.js",
       title: "Vue Project-Blog",
     },
   },
+  
 })

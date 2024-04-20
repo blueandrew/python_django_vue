@@ -1,8 +1,10 @@
 from django.urls import path
-from backend.views import works, data_test
+
+from backend.views import worksViews, testViews
+
 
 urlpatterns = [
-    path("works", works),
-    path("data_test", data_test),
-
+    path('works', worksViews.works),
+    path('worksDetailed', worksViews.worksDetailed),
+    path('data_test', testViews.data_test),
 ]

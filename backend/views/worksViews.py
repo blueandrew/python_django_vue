@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers  
 from django.views.decorators.csrf import csrf_exempt
 
+from backend.serializers.worksSerializers import WorksSerializer, WorksDetailedSerializer
 from backend.models import Works
 
 
@@ -14,10 +15,10 @@ from backend.models import Works
 @require_http_methods(['GET', 'POST', 'PATCH', 'DELETE'])
 def works(request):
     if request.method =='GET':
-        query_data = Works.objects.all()
-        query_data = serializers.serialize("json", query_data)  
+        query_data = Works.objects.filter(status=1)
 
-        response = JsonResponse(query_data, status=200, safe=False)
+        query_data_serializer = WorksSerializer(query_data, many=True)
+        response = JsonResponse(query_data_serializer.data, safe=False)
 
         return response
 
@@ -31,7 +32,7 @@ def works(request):
         result_info = {
             'message': 'ok' if query_create else 'errpr'
         }
-        response = JsonResponse(result_info, status=200)
+        response = JsonResponse(result_info)
 
         return response
     if request.method =='PATCH':
@@ -48,7 +49,7 @@ def works(request):
         result_info = {
             'message': 'ok' if query_data else 'errpr'
         }
-        response = JsonResponse(result_info, status=200)
+        response = JsonResponse(result_info)
 
         return response
 
@@ -62,13 +63,18 @@ def works(request):
         result_info = {
             'message': 'ok' if query_data else 'errpr'
         }
-        response = JsonResponse(result_info, status=200)
+        response = JsonResponse(result_info)
 
         return response
 
-@require_http_methods(['GET'])
-def data_test(request):
-    data = [{"title": f"title{i}", "url": f"url{i}", "status":  'false' }  for i in range(5) ] 
+@csrf_exempt
+@require_http_methods(['POST'])
+def worksDetailed(request):
+    request_data = json.loads(request.body)
+    work_id = request_data['work_id']
+    query_data = Works.objects.get(id=work_id)
 
-    response = JsonResponse(data, status=200, safe=False)
+    query_data_serializer = WorksDetailedSerializer(query_data)
+    response = JsonResponse(query_data_serializer.data)
+
     return response
