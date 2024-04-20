@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-white dark:bg-gray-900">
+  <section class="bg-white">
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
 
       <div class="md:border border-gray-200  mb-4">
@@ -8,10 +8,10 @@
         </div>
       </div>
       <div class="px-1 mb-4">
-        <h2 class="text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">{{ worksData.title }}</h2>
+        <h2 class="text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">{{ worksData.title }}</h2>
       </div>
       <div class="px-1 mb-4">
-          <p class="text-xs text-gray-500 truncate dark:text-gray-400">
+          <p class="text-xs text-gray-500 truncate">
             {{ formatDateString(worksData.updated_at) }}
         </p>
       </div>

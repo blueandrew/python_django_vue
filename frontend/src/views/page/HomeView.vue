@@ -1,9 +1,9 @@
 <template>
-  <section class="bg-white dark:bg-gray-900">
+  <section class="bg-white">
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
 
         <div class="mx-auto max-w-screen-sm text-center lg:mb-16 mb-8">
-            <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">Image</h2>
+            <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Image</h2>
         </div>
         <div class="grid gap-2 lg:grid-cols-4">
           <div v-for='(item, index) in worksList' :key=index>
@@ -14,7 +14,7 @@
               </div>
             </router-link>
             <div class="mb-3">
-              <p class="text-xs text-gray-500 truncate dark:text-gray-400">
+              <p class="text-xs text-gray-500 truncate">
                 {{ formatDateString(item.updated_at) }}
               </p>
             </div>
