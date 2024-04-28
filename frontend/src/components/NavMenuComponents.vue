@@ -25,6 +25,11 @@
             Test Page
           </router-link>
         </li>
+        <li>
+          <router-link to='/drawWorks' :class="[ useRoute().fullPath == '/drawWorks' ? activeClass : defaultClass]" @click='navbarClose'>
+            Draw Works
+          </router-link>
+        </li>
       </ul>
     </div>
     </div>
