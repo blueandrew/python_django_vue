@@ -2,7 +2,7 @@ const { defineConfig } = require('@vue/cli-service')
 const webpack = require('webpack');
 
 module.exports = defineConfig({
-  publicPath: '/python_django_vue/frontend/dist/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/python_django_vue/' : '/',
   transpileDependencies: true,
   assetsDir: 'static',
   configureWebpack: {
