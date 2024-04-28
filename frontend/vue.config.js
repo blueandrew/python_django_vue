@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = defineConfig({
   publicPath: process.env.NODE_ENV === 'production' ? '/python_django_vue/' : '/',
   transpileDependencies: true,
-  assetsDir: 'static',
+  // assetsDir: 'static',
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
