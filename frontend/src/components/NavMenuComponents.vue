@@ -30,6 +30,11 @@
             Draw Works
           </router-link>
         </li>
+        <li>
+          <router-link to='/playWorks' :class="[ useRoute().fullPath == '/playWorks' ? activeClass : defaultClass]" @click='navbarClose'>
+            play Works
+          </router-link>
+        </li>
       </ul>
     </div>
     </div>

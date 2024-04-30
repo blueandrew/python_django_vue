@@ -4,6 +4,7 @@ import HomeView from '../views/page/HomeView.vue'
 import TestView from '../views/page/TestView.vue'
 import DetailedView from '../views/page/DetailedView.vue'
 import DrawWorksView from '../views/page/DrawWorksView.vue'
+import PlayWorksView from '../views/page/PlayWorksView.vue'
 
 const routes = [
   {
@@ -56,6 +57,14 @@ const routes = [
       title: 'Draw Works',
     },
     component: DrawWorksView
+  },
+  {
+    path: '/playWorks',
+    name: 'playWorks',
+    meta: {
+      title: 'Play Works',
+    },
+    component: PlayWorksView
   },
 ]
 

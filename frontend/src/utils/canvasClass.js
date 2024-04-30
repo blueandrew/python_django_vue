@@ -14,7 +14,6 @@ class Eraser extends Pen {
    }
 
    draw(ctx, color, size, lastX, lastY) {
-      ctx.beginPath();
       
       ctx.globalCompositeOperation="destination-out";
       ctx.strokeStyle = color;
@@ -25,8 +24,6 @@ class Eraser extends Pen {
       ctx.fill();
 
       ctx.globalCompositeOperation="source-over";
-      ctx.save();
-      ctx.closePath();
    }
 }
 
@@ -36,7 +33,6 @@ class Pen1 extends Pen {
    }
 
    draw(ctx, color, size, lastX, lastY, x, y) {
-      ctx.beginPath();
       ctx.globalCompositeOperation="source-over";
 
       ctx.strokeStyle = color;
@@ -46,8 +42,6 @@ class Pen1 extends Pen {
       ctx.moveTo(lastX, lastY);
       ctx.lineTo(x, y);
       ctx.stroke();
-      ctx.save();
-      ctx.closePath();
    }
 }
 
@@ -57,7 +51,6 @@ class Pen2 extends Pen {
    }
 
    draw(ctx, color, size, lastX, lastY, x, y) {
-      ctx.beginPath();
       ctx.globalCompositeOperation="source-over";
 
       ctx.strokeStyle = color;
@@ -71,9 +64,6 @@ class Pen2 extends Pen {
       ctx.moveTo(lastX+10, lastY+10);
       ctx.lineTo(x+10, y+10);
       ctx.stroke();
-
-      ctx.save();
-      ctx.closePath();
    }
 }
 
@@ -81,6 +71,9 @@ export default class CanvasObj{
    constructor(canvasElement){
       this.canvas = canvasElement
       this.ctx = this.canvas.getContext('2d', {willReadFrequently:true});
+
+      this.canvasWidth = 600;
+      this.canvasHeight = 600;
 
       this.color = '#000000';
       this.size = 10;
@@ -94,6 +87,11 @@ export default class CanvasObj{
       this.currentPen = this.pens['pen1'];
    }
 
+   setCanvasSize(canvasWidth, canvasHeight){
+      this.canvasWidth = canvasWidth;
+      this.canvasHeight = canvasHeight;
+   }
+
    setPenSettings(penType, color, size){
       this.currentPen = this.pens[penType];
       this.color = color;
@@ -101,24 +99,28 @@ export default class CanvasObj{
    }
 
    saveImageData(){
-      // return this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
       return this.canvas.toDataURL();
    }
 
-   putImageData(imgData, casveWidth, casveHeight){
+   putImageData(imgData){
       let img = new Image();
       img.onload = () => {
-         this.clearCasve(casveWidth, casveHeight);
-         this.ctx.drawImage(img, 0, 0, casveWidth, casveHeight)
+         this.clearCanvas();
+         this.ctx.drawImage(img, 0, 0, this.canvasWidth, this.canvasHeight)
       };
       img.src = imgData;
    }
 
    usePen(lastX, lastY, x, y){
+      this.ctx.beginPath();
+      
       this.currentPen.draw(this.ctx, this.color, this.size, lastX, lastY, x, y);
+      
+      this.ctx.save();
+      this.ctx.closePath();
    }
 
-   clearCasve(casveWidth, casveHeight){
-      this.ctx.clearRect(0, 0, casveWidth, casveHeight);
+   clearCanvas(){
+      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
    }
 }

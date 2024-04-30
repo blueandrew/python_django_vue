@@ -83,6 +83,8 @@
     }else{
       onSetCanvasInit();
     }
+  
+    canvasObj.setCanvasSize(canvas.value.width, canvas.value.height)
   }
 
   onMounted(() => {
@@ -158,7 +160,7 @@
   }
 
   const clearCanvas = () => {
-    canvasObj.clearCasve(canvas.value.width, canvas.value.height)
+    canvasObj.clearCanvas()
     drawRecover.splice(0);
     drawRedo.splice(0);
     saveData.width = 600;
@@ -178,7 +180,7 @@
     if (drawRecover.length>0){
       let recoverData = drawRecover.pop();
       drawRedo.push(canvasObj.saveImageData());
-      canvasObj.putImageData(recoverData, canvas.value.width, canvas.value.height);
+      canvasObj.putImageData(recoverData);
 
       let drawPoint = {
         'x': 0,
@@ -199,7 +201,7 @@
     if (drawRedo.length>0){
       let redoData = drawRedo.pop();
       drawRecover.push(canvasObj.saveImageData());
-      canvasObj.putImageData(redoData, canvas.value.width, canvas.value.height);
+      canvasObj.putImageData(redoData);
 
       let drawPoint = {
         'x': 0,
