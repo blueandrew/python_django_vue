@@ -19,8 +19,8 @@
 
 		<div class="inline-flex rounded-md" role="group">
 			<button data-tooltip-target="tooltip-bottom_playt" data-tooltip-placement="bottom" type="button" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700  focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-				:class = "isPlayEnd ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
-				@click="isPause ? drawPlay() : drawPause()"
+				:class="isPlayEnd ? (isRefresh ? 'hover:bg-gray-200 hover:text-white': 'bg-gray-100 cursor-not-allowed') : 'hover:bg-gray-200 hover:text-white'"
+				@click="isPlayEnd ? drawPlayRefresh() : (isPause ? drawPlay() : drawPause())"
 			>
 				<SvgComponents 
 					:svgSize=24
@@ -28,7 +28,7 @@
 				/>
 			</button>
 			<div id="tooltip-bottom_playt" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-				{{ isPause ? 'play' : 'Pause' }}
+				{{ isPlayEnd ? 'refresh' : (isPause ? 'play' : 'Pause') }}
 				<div class="tooltip-arrow" data-popper-arrow></div>
 			</div>
 		</div>
@@ -49,6 +49,21 @@
 				<div class="tooltip-arrow" data-popper-arrow></div>
 			</div>
 		</div>
+
+		<div class="inline-flex rounded-md" role="group">
+			<button data-tooltip-target="tooltip-bottom_open" data-tooltip-placement="bottom" type="button" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700 hover:bg-gray-200 hover:text-white focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
+				@click="openWorks"
+			>
+				<SvgComponents 
+					:svgSize=24
+					svgName="openWorks"
+				/>
+			</button>
+			<div id="tooltip-bottom_open" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+				Open works
+				<div class="tooltip-arrow" data-popper-arrow></div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -58,15 +73,17 @@
 	import SvgComponents from '../SvgComponents.vue'
 
 	// const isAutoPlay = defineModel('isAutoPlay');
+	const isRefresh = defineModel('isRefresh');
 	const isPlayEnd = defineModel('isPlayEnd');
 	const isPause = defineModel('isPause');
 	const isNextStep = defineModel('isNextStep');
 	const isPreviousStep = defineModel('isPreviousStep');
 
-	const emit = defineEmits(['drawPlay', 'drawPause', 'drawNextStep', 'drawPreviousStep']);
+	const emit = defineEmits(['drawPlayRefresh', 'drawPlay', 'drawPause', 'drawNextStep', 'drawPreviousStep', 'openWorks']);
+	const drawPlayRefresh = () => emit('drawPlayRefresh');
 	const drawPlay = () => emit('drawPlay');
 	const drawPause = () => emit('drawPause');
 	const drawNextStep = () => emit('drawNextStep');
 	const drawPreviousStep = () => emit('drawPreviousStep');
-
+	const openWorks = () => emit('openWorks');
 </script>

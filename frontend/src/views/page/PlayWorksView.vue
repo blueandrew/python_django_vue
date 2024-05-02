@@ -12,15 +12,18 @@
       </div>
       
       <ShowWorksToolbar
+        :isRefresh="isRefresh"
         :isPlayEnd="isPlayEnd"
         :isAutoPlay="isAutoPlay"
         :isPause="isPause"
         :isNextStep="isNextStep"
         :isPreviousStep="isPreviousStep"
+        @drawPlayRefresh="drawPlayRefresh"
         @drawPlay="drawPlay"
         @drawPause="drawPause"
         @drawNextStep="drawNextStep"
         @drawPreviousStep="drawPreviousStep"
+        @openWorks="openWorks"
       />
 
     </div>
@@ -33,6 +36,7 @@
   import CanvasObj from '../../utils/canvasClass.js'
   import ShowWorksToolbar from '../../components/works/ShowWorksToolbar.vue'
 
+  const isRefresh = ref(false);
   const isPlayEnd = ref(false);
   const isAutoPlay = ref(false);
   const isPause = ref(true);
@@ -44,7 +48,7 @@
 
   let canvasObj = null;
 
-  const drawDataJson = {
+  let drawDataJson = {
     "width": 600,
     "height": 600,
     "data": [
@@ -133,7 +137,7 @@
   const onSetCanvasInit= () => {
     canvas.value.width = 600;
     canvas.value.height = 600;
-  }
+  };
   
   let onResize = () => {
     const rect = canvasContainer.value.getBoundingClientRect();
@@ -149,18 +153,55 @@
   }
   
   onMounted(() => {
-    onSetCanvasInit()
+    onSetCanvasInit();
     canvasObj = new CanvasObj(canvas.value);
     addEventListener ('resize', onResize);
   })
 
   onBeforeUnmount(() => {
-    removeEventListener ('resize', onResize)
+    removeEventListener ('resize', onResize);
   })
+
+  const readSelectedJSON = (event) => {
+    let file = event.target.files[0];
+    let reader = new FileReader();
+    reader.onload = (event) => {
+      Object.assign(drawData, JSON.parse(event.target.result));
+
+      canvas.value.width = drawData.width;
+      canvas.value.height = drawData.height;
+
+      drawPlayRefresh();
+      drawPlay();
+    };
+    reader.readAsText(file);
+  }
+
+  const openWorks = () => {
+    let input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (event) =>  {
+        readSelectedJSON(event);
+    };
+    input.click();
+  }
+
+  const drawPlayRefresh = () => {
+    canvasObj.clearCanvas();
+    currentStep.value = 0;
+    isRefresh.value = false;
+    isPlayEnd.value = false;
+    isAutoPlay.value = false;
+    isPause.value = true;
+    isNextStep.value = true;
+    isPreviousStep.value= false;
+  }
 
   const drawPlay = () => {
     if (currentStep.value >= drawData.data.length){
       isPlayEnd.value = true;
+      isRefresh.value = true;
       isAutoPlay.value = false;
       isPause.value = true;
       isNextStep.value = false;
@@ -202,11 +243,12 @@
     currentStep.value +=  1;
     if (currentStep.value >= drawDataJson.data.length){
       isPlayEnd.value = true;
+      isRefresh.value = true;
       isNextStep.value = false;
     }
 
     drawWithStepData = playData.slice(0, currentStep.value);
-    drawWithStep(drawWithStepData)    
+    drawWithStep(drawWithStepData);
   }
 
   const drawPreviousStep = () => {
@@ -214,6 +256,7 @@
     let drawWithStepData = playData;
 
     isPlayEnd.value = false;
+    isRefresh.value = false;
     isAutoPlay.value = false;
     isPause.value = true;
     isNextStep.value = true;
@@ -225,7 +268,7 @@
     }
 
     drawWithStepData = playData.slice(0, currentStep.value);
-    drawWithStep(drawWithStepData)   
+    drawWithStep(drawWithStepData);
   }
 
   const draw = (currentStepNum, currentPlayData, lastX, lastY) => {
@@ -234,13 +277,13 @@
 
       currentStep.value +=  1;
       if (isAutoPlay.value){
-        drawPlay()
+        drawPlay();
       }
     }, 10);  
   }
 
   const drawWithStep = (drawWithStepData) => {
-    canvasObj.clearCanvas()
+    canvasObj.clearCanvas();
 
     let currentPlayData = [];
     let lastX = 0;
@@ -251,21 +294,17 @@
       lastX = (i<1) ? 0 : drawWithStepData[i-1].x;
       lastY = (i<1) ? 0 : drawWithStepData[i-1].y;
 
-      drawAction(currentPlayData, lastX, lastY)
+      drawAction(currentPlayData, lastX, lastY);
     }
   }
 
   const drawAction = (currentPlayData, lastX, lastY) => {
     if(currentPlayData.action==1){
-        canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
-      }
+      canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
+    }
 
-      if(currentPlayData.action==2){
-         console.log('Action: Mouse UP');
-      }
-
-      if(currentPlayData.action==3){
-        canvasObj.usePen(lastX, lastY, currentPlayData.x, currentPlayData.y);
-      } 
+    if(currentPlayData.action==3){
+      canvasObj.usePen(lastX, lastY, currentPlayData.x, currentPlayData.y);
+    } 
   }
 </script>

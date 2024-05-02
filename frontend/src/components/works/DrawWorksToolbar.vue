@@ -2,9 +2,9 @@
 	<div class="text-center pt-2">
 		<div class="inline-flex rounded-md" role="group">
 			<button data-tooltip-target="tooltip-bottom1_previous" data-tooltip-placement="bottom" type="button" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700  focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-				:class = "drawRecover.length <= 0 ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
-				@click="recover"
-				:disabled="drawRecover.length <= 0 ? true : false"
+				:class = "currentStep == -1 ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
+				@click="undo"
+				:disabled="currentStep == -1 ? true : false"
 			>
 				<SvgComponents 
 					:svgSize=24
@@ -12,16 +12,16 @@
 				/>
 			</button>
 			<div id="tooltip-bottom1_previous" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-				Recover
+				Undo
 				<div class="tooltip-arrow" data-popper-arrow></div>
 			</div>
 		</div>
 
 		<div class="inline-flex rounded-md" role="group">
 			<button data-tooltip-target="tooltip-bottom_next" data-tooltip-placement="bottom" type="button" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700  focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-				:class = "drawRedo.length <= 0 ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
+				:class = "(mouseUpStepIndexList.length-1) <= currentStep ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
 				@click="redo"
-				:disabled="drawRedo.length <= 0 ? true : false"
+				:disabled="(mouseUpStepIndexList.length-1) <= currentStep ? true : false"
 			>
 				<SvgComponents 
 					:svgSize=24
@@ -30,21 +30,6 @@
 			</button>
 			<div id="tooltip-bottom_next" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
 				Redo
-				<div class="tooltip-arrow" data-popper-arrow></div>
-			</div>
-		</div>
-
-		<div class="inline-flex rounded-md" role="group">
-			<button data-tooltip-target="tooltip-bottom_open" data-tooltip-placement="bottom" type="button" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700 hover:bg-gray-200 hover:text-white focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-				@click="openWorks"
-			>
-				<SvgComponents 
-					:svgSize=24
-					svgName="openWorks"
-				/>
-			</button>
-			<div id="tooltip-bottom_open" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-				Open works
 				<div class="tooltip-arrow" data-popper-arrow></div>
 			</div>
 		</div>
@@ -92,7 +77,7 @@
 								/>
 							</div>
 
-							<div :id="'tooltip-bottom_' + penName" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+							<div :id="'tooltip-bottom_'+penName" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
 								{{ penName }}
 								<div class="tooltip-arrow" data-popper-arrow></div>
 							</div>
@@ -169,13 +154,12 @@
   const penTypeList = defineModel('penTypeList');
   const penSizeList = defineModel('penSizeList');
 
-  const drawRecover = defineModel('drawRecover');
-  const drawRedo = defineModel('drawRedo');
+  const mouseUpStepIndexList = defineModel('mouseUpStepIndexList');
+  const currentStep = defineModel('currentStep');
 
-  const emit = defineEmits(['clearCanvas', 'saveWorks', 'openWorks', 'recover', 'redo']);
+  const emit = defineEmits(['clearCanvas', 'saveWorks', 'undo', 'redo']);
   const clearCanvas = () => emit('clearCanvas');
   const saveWorks = () => emit('saveWorks');
-  const openWorks = () => emit('openWorks');
-  const recover = () => emit('recover');
+  const undo = () => emit('undo');
   const redo = () => emit('redo');
 </script>

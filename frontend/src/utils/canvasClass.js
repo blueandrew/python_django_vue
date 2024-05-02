@@ -10,11 +10,10 @@ class Pen{
 
 class Eraser extends Pen {
    constructor() {
-      super('Eraser');
+      super('eraser');
    }
 
    draw(ctx, color, size, lastX, lastY) {
-      
       ctx.globalCompositeOperation="destination-out";
       ctx.strokeStyle = color;
       ctx.lineWidth = size;
@@ -29,7 +28,7 @@ class Eraser extends Pen {
 
 class Pen1 extends Pen {
    constructor() {
-      super('Pen1');
+      super('pen1');
    }
 
    draw(ctx, color, size, lastX, lastY, x, y) {
@@ -47,7 +46,7 @@ class Pen1 extends Pen {
 
 class Pen2 extends Pen {
    constructor() {
-      super('Pen1');
+      super('pen2');
    }
 
    draw(ctx, color, size, lastX, lastY, x, y) {
@@ -75,6 +74,11 @@ export default class CanvasObj{
       this.canvasWidth = 600;
       this.canvasHeight = 600;
 
+      this.drawData = [];
+
+      this.penTypeList = ['eraser', 'pen1', 'pen2'];
+      this.penSizeList = [5, 10];
+
       this.color = '#000000';
       this.size = 10;
 
@@ -98,22 +102,9 @@ export default class CanvasObj{
       this.size = size;
    }
 
-   saveImageData(){
-      return this.canvas.toDataURL();
-   }
-
-   putImageData(imgData){
-      let img = new Image();
-      img.onload = () => {
-         this.clearCanvas();
-         this.ctx.drawImage(img, 0, 0, this.canvasWidth, this.canvasHeight)
-      };
-      img.src = imgData;
-   }
-
    usePen(lastX, lastY, x, y){
       this.ctx.beginPath();
-      
+
       this.currentPen.draw(this.ctx, this.color, this.size, lastX, lastY, x, y);
       
       this.ctx.save();
@@ -122,5 +113,41 @@ export default class CanvasObj{
 
    clearCanvas(){
       this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+   }
+
+   addDrawData(data){
+      let widthScale = 65536/this.canvasWidth;
+
+      data.x = data.x*widthScale;
+      data.y = data.y*widthScale;
+      data.color = this.color;
+      // data.action = data.action;
+      data.penSize = this.size*widthScale;
+      data.penType = this.currentPen.type;
+
+      this.drawData = [...this.drawData, data];
+   }
+
+   upDateDrawData(data){
+      this.drawData = [...data];
+   }
+
+   deleteDrawData(idx){
+      console.log(this.drawData);
+      if(idx == -1){
+         this.drawData = [];
+         return
+      } 
+
+      this.drawData = this.drawData.slice(idx);
+   }
+
+   getSaveDrawData(){
+      let saveDrawData = {};
+      saveDrawData.width = this.canvasWidth; 
+      saveDrawData.height = this.canvasHeight;
+      saveDrawData.data = this.drawData;
+
+      return saveDrawData
    }
 }

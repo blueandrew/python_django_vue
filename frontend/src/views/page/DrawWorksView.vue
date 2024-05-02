@@ -17,14 +17,13 @@
       
       <DrawWorksToolbar
          v-model:toolbarData="toolbarData"
-         :drawRecover="drawRecover"
-         :drawRedo="drawRedo"
+         :mouseUpStepIndexList="mouseUpStepIndexList"
+         :currentStep="currentStep"
          :penTypeList="penTypeList"
          :penSizeList="penSizeList"
          @clearCanvas="clearCanvas"
          @saveWorks="saveWorks"
-         @openWorks="openWorks"
-         @recover="recover"
+         @undo="undo"
          @redo="redo"
       />
 
@@ -33,7 +32,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
+  import { ref, reactive, toRaw, onMounted, onBeforeUnmount } from 'vue'
   
   import CanvasObj from '../../utils/canvasClass.js'
   import DrawWorksToolbar from '../../components/works/DrawWorksToolbar.vue'
@@ -45,25 +44,16 @@
   };
   const toolbarData = reactive(toolbarInitData);
 
+  const penTypeList = reactive([]);
+  const penSizeList = reactive([]);
+
   const isDraw = ref(false);
-  const canvas = ref(null);
   const canvasContainer = ref(null);
+  const canvas = ref(null);
 
-  const penTypeList = reactive(['eraser', 'pen1', 'pen2']);
-  const penSizeList = reactive([5, 10]);
-
-  const saveInitData = {
-    'width': 600,
-    'height': 600,
-    'data': []
-  };
-  const saveData = reactive(saveInitData);
-  const drawRecover = reactive([]);
-  const drawRedo = reactive([]);
-  
-  let timer = 0;
-  let startTimer = 0;
-  let endTimer = 0;
+  const drawHistoryData = ref([]);
+  const mouseUpStepIndexList = ref([]);
+  const currentStep = ref(-1);
 
   let canvasObj = null;
   let lastX = 0;
@@ -72,7 +62,7 @@
   const onSetCanvasInit= () => {
     canvas.value.width = 600;
     canvas.value.height = 600;
-  }
+  };
 
   let onResize = () => {
     const rect = canvasContainer.value.getBoundingClientRect();
@@ -84,137 +74,185 @@
       onSetCanvasInit();
     }
   
-    canvasObj.setCanvasSize(canvas.value.width, canvas.value.height)
+    canvasObj.setCanvasSize(canvas.value.width, canvas.value.height);
   }
 
   onMounted(() => {
-    onSetCanvasInit()
+    onSetCanvasInit();
+    
     canvasObj = new CanvasObj(canvas.value);
+    penTypeList.push(...canvasObj.penTypeList);
+    penSizeList.push(...canvasObj.penSizeList);
+
     addEventListener ('resize', onResize);
   })
 
   onBeforeUnmount(() => {
-    removeEventListener ('resize', onResize)
+    removeEventListener ('resize', onResize);
   })
+
+  const mouseDown = (e) => {
+    isDraw.value = true;
+
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+
+    if ((mouseUpStepIndexList.value.length-1) > currentStep.value){
+      canvasObj.deleteDrawData(mouseUpStepIndexList.value[currentStep.value]);
+      drawHistoryData.value = toRaw(drawHistoryData.value).slice(0, mouseUpStepIndexList.value[currentStep.value]);
+      mouseUpStepIndexList.value = mouseUpStepIndexList.value.slice(0, currentStep.value+1);
+    }
+
+    canvasObj.setPenSettings(penTypeList[toolbarData.penType], toolbarData.color, penSizeList[toolbarData.penSize]);
+    canvasObj.addDrawData({
+      "x": lastX,
+      "y": lastY,
+      "action":1
+    });
+
+    drawHistoryData.value.push(canvasObj.drawData.slice(-1));
+  }
 
   const mouseUp = (e) => {
     isDraw.value = false;
 
-    endTimer = new Date().getTime();
-    timer = endTimer - startTimer;
-
-    let drawPoint = {
-      'x': e.offsetX,
-      'y': e.offsetY,
-      'penType': penTypeList[toolbarData.penType],
-      'color': toolbarData.color,
-      'penSize': penSizeList[toolbarData.penSize],
-      'penAction': 1,
-      'time': timer
-    };
-    saveData.data.push(drawPoint);
-
-    endTimer = 0;
-  }
-
-  const mouseDown = (e) => {
-    canvasObj.setPenSettings(penTypeList[toolbarData.penType], toolbarData.color, penSizeList[toolbarData.penSize]);
-    isDraw.value = true;
     lastX = e.offsetX;
     lastY = e.offsetY;
 
-    drawRecover.push(canvasObj.saveImageData());
+    canvasObj.addDrawData({
+      "x": lastX,
+      "y": lastY,
+      "action":2
+    });
+    drawHistoryData.value.push(canvasObj.drawData.slice(-1));
 
-    let drawPoint = {
-      'x': e.offsetX,
-      'y': e.offsetY,
-      'penType': penTypeList[toolbarData.penType],
-      'color': toolbarData.color,
-      'penSize': penSizeList[toolbarData.penSize],
-      'penAction': 0,
-      'time': 0
-    };
-    saveData.data.push(drawPoint);
-
-    startTimer = new Date().getTime();
-
+    if (drawHistoryData.value.length>1){
+      currentStep.value += 1;
+      mouseUpStepIndexList.value.push(drawHistoryData.value.length-1);
+    }
   }
 
   const mouseMove = (e) => {
     if (!isDraw.value){
       return
     }
+
     canvasObj.usePen(lastX, lastY, e.offsetX, e.offsetY);
     lastX = e.offsetX;
     lastY = e.offsetY;
 
-    drawRedo.splice(0);
+    canvasObj.addDrawData({
+      "x": lastX,
+      "y": lastY,
+      "action":3
+    });
+    drawHistoryData.value.push(canvasObj.drawData.slice(-1));
   }
 
-  const mouseOut = () => {
+  const mouseOut = (e) => {
     if (!isDraw.value){
       return
     }
+
+    mouseUp(e);
 
     isDraw.value = false;
   }
 
   const clearCanvas = () => {
-    canvasObj.clearCanvas()
-    drawRecover.splice(0);
-    drawRedo.splice(0);
-    saveData.width = 600;
-    saveData.height = 600;
-    saveData.data = [];
+    canvasObj.clearCanvas();
+    currentStep.value = -1;
+    mouseUpStepIndexList.value = [];
+    canvasObj.drawData = [];
+    drawHistoryData.value = [];
   }
 
   const saveWorks = () => {
-    alert('Save function under development.');
+    let saveDrawData = canvasObj.getSaveDrawData();
+    const blob = new Blob([JSON.stringify(saveDrawData)], { type: "text/json" });
+    const link = document.createElement("a");
+
+    link.download = 'drawHistoryData.json';
+    link.href = window.URL.createObjectURL(blob);
+    link.dataset.downloadurl = ["text/json", link.download, link.href].join(":");
+
+    const evt = new MouseEvent("click", {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+    });
+
+    link.dispatchEvent(evt);
+    link.remove();
   }
 
-  const openWorks = () => {
-    alert('open Function under development.');
-  }
+  const undo = () => {
+    currentStep.value -= 1;
 
-  const recover = () => {
-    if (drawRecover.length>0){
-      let recoverData = drawRecover.pop();
-      drawRedo.push(canvasObj.saveImageData());
-      canvasObj.putImageData(recoverData);
+    if(currentStep.value===-1){
+      canvasObj.clearCanvas();
+      canvasObj.deleteDrawData(-1);
 
-      let drawPoint = {
-        'x': 0,
-        'y': 0,
-        'penType': "eraser",
-        'color': '#ffffff',
-        'penSize': 0,
-        'penAction': 2,
-        'time': 0
-      };
-      saveData.data.push(drawPoint);
-    }else{
       return
     }
+   
+    let drawWithStepData = toRaw(drawHistoryData.value).slice(0, mouseUpStepIndexList.value[currentStep.value]);
+    drawWithStepData = [].concat(...drawWithStepData);
+    let convertDrawDataList = convertDrawData(drawWithStepData);
+    drawWithStep(convertDrawDataList);
   }
 
   const redo = () => {
-    if (drawRedo.length>0){
-      let redoData = drawRedo.pop();
-      drawRecover.push(canvasObj.saveImageData());
-      canvasObj.putImageData(redoData);
+    currentStep.value += 1;
 
-      let drawPoint = {
-        'x': 0,
-        'y': 0,
-        'penType': "eraser",
-        'color': '#ffffff',
-        'penSize': 0,
-        'penAction': 3,
-        'time': 0
-      };
-      saveData.data.push(drawPoint);
-    }else{
-      return
+    let drawWithStepData = toRaw(drawHistoryData.value).slice(0, mouseUpStepIndexList.value[currentStep.value]);
+    drawWithStepData = [].concat(...drawWithStepData);
+    let convertDrawDataList = convertDrawData(drawWithStepData);
+    drawWithStep(convertDrawDataList);
+    
+    let upDateDrawData = structuredClone(canvasObj.drawData);
+    upDateDrawData.push(drawWithStepData.slice(canvasObj.drawData.length));
+
+    canvasObj.upDateDrawData(upDateDrawData);
+  }
+
+
+  const drawWithStep = (drawWithStepData) => {
+    canvasObj.clearCanvas();
+
+    let currentPlayData = [];
+    let x = 0;
+    let y = 0;
+
+    for(let i=0; i<drawWithStepData.length; i++){
+      currentPlayData = drawWithStepData[i];
+      x = (i<1) ? 0 : drawWithStepData[i-1].x;
+      y = (i<1) ? 0 : drawWithStepData[i-1].y;
+
+      drawAction(currentPlayData, x, y);
     }
   }
+
+  const drawAction = (currentPlayData, lastX, lastY) => {
+    if(currentPlayData.action==1){
+      canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
+    }
+
+    if(currentPlayData.action==3){
+      canvasObj.usePen(lastX, lastY, currentPlayData.x, currentPlayData.y);
+    } 
+  }
+
+  const convertDrawData = (data) => {
+    let drawList = structuredClone(data);
+    for(let i=0; i<data.length; i++){
+      drawList[i].x = Math.floor(data[i].x / 65536 * canvasObj.canvasWidth);
+      drawList[i].y = Math.floor(data[i].y / 65536 * canvasObj.canvasWidth);
+      drawList[i].penSize = Math.ceil(data[i].penSize / 65536 * canvasObj.canvasWidth);
+      
+    }
+
+    return drawList
+  }
+
 </script>
