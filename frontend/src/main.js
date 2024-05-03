@@ -11,11 +11,11 @@ const app = createApp(App)
 
 router.beforeEach((to, from, next) => {
 	if (to.meta.title) {
-		document.title = to.meta.title
+		document.title = to.meta.title;
 	}
-	next()
+	next();
 })
 
-app.config.globalProperties.$axios = axios
-app.use(router).mount('#app')
+app.config.globalProperties.$axios = axios;
+app.use(router).mount('#app');
 

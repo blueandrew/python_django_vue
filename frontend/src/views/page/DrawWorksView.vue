@@ -67,7 +67,7 @@
   let onResize = () => {
     const rect = canvasContainer.value.getBoundingClientRect();
 
-    if (rect.width < 768){
+    if (rect.width < 768) {
       canvas.value.width = rect.width;
       canvas.value.height = rect.width;
     }else{
@@ -97,7 +97,7 @@
     lastX = e.offsetX;
     lastY = e.offsetY;
 
-    if ((mouseUpStepIndexList.value.length-1) > currentStep.value){
+    if ((mouseUpStepIndexList.value.length-1) > currentStep.value) {
       canvasObj.deleteDrawData(mouseUpStepIndexList.value[currentStep.value]);
       drawHistoryData.value = toRaw(drawHistoryData.value).slice(0, mouseUpStepIndexList.value[currentStep.value]);
       mouseUpStepIndexList.value = mouseUpStepIndexList.value.slice(0, currentStep.value+1);
@@ -189,7 +189,7 @@
   const undo = () => {
     currentStep.value -= 1;
 
-    if(currentStep.value===-1){
+    if (currentStep.value === -1) {
       canvasObj.clearCanvas();
       canvasObj.deleteDrawData(-1);
 
@@ -226,15 +226,15 @@
 
     for(let i=0; i<drawWithStepData.length; i++){
       currentPlayData = drawWithStepData[i];
-      x = (i<1) ? 0 : drawWithStepData[i-1].x;
-      y = (i<1) ? 0 : drawWithStepData[i-1].y;
+      x = (i < 1) ? 0 : drawWithStepData[i - 1].x;
+      y = (i < 1) ? 0 : drawWithStepData[i - 1].y;
 
       drawAction(currentPlayData, x, y);
     }
   }
 
   const drawAction = (currentPlayData, lastX, lastY) => {
-    if(currentPlayData.action==1){
+    if (currentPlayData.action == 1) {
       canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
     }
 
@@ -249,10 +249,8 @@
       drawList[i].x = Math.floor(data[i].x / 65536 * canvasObj.canvasWidth);
       drawList[i].y = Math.floor(data[i].y / 65536 * canvasObj.canvasWidth);
       drawList[i].penSize = Math.ceil(data[i].penSize / 65536 * canvasObj.canvasWidth);
-      
     }
 
     return drawList
   }
-
 </script>

@@ -33,10 +33,10 @@
   import { apiGetWorksDetailed } from '../../api'
   import { formatDateString } from '../../utils/format.js'
   
-  const worksData = ref([])
+  const worksData = ref([]);
 
   onMounted(async () => {
-    await getWorksData()
+    await getWorksData();
   });
   
   const getWorksData = async () => {

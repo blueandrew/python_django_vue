@@ -19,9 +19,9 @@
 
 		<div class="inline-flex rounded-md" role="group">
 			<button data-tooltip-target="tooltip-bottom_next" data-tooltip-placement="bottom" type="button" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700  focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center"
-				:class = "(mouseUpStepIndexList.length-1) <= currentStep ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
+				:class = "(mouseUpStepIndexList.length - 1) <= currentStep ? 'bg-gray-100 cursor-not-allowed' : 'hover:bg-gray-200 hover:text-white'"
 				@click="redo"
-				:disabled="(mouseUpStepIndexList.length-1) <= currentStep ? true : false"
+				:disabled="(mouseUpStepIndexList.length - 1) <= currentStep ? true : false"
 			>
 				<SvgComponents 
 					:svgSize=24

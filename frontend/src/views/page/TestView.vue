@@ -71,18 +71,18 @@
   import { apiGetWorksList } from '../../api'
   import { formatDateString } from '../../utils/format.js'
   
-  const worksList = ref([])
+  const worksList = ref([]);
 
   onMounted(async () => {
-    await getWorksList()
+    await getWorksList();
   });
   
   const getWorksList = async () => {
-    worksList.value = await apiGetWorksList()
+    worksList.value = await apiGetWorksList();
   }
 
   const getMergedTagStr = (data) => {
-    let mergedTagStr = ''
+    let mergedTagStr = '';
 
     data.forEach(function(value){
         if (mergedTagStr==''){

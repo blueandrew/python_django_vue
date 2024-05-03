@@ -213,8 +213,8 @@
     let playData = convertDrawData(toRaw(drawData).data);
     let currentStepNum = currentStep.value;
     let currentPlayData = playData[currentStepNum];
-    let lastX = (currentStepNum < 1) ? 0 : playData[currentStepNum-1].x;
-    let lastY = (currentStepNum < 1) ? 0 : playData[currentStepNum-1].y;
+    let lastX = (currentStepNum < 1) ? 0 : playData[currentStepNum - 1].x;
+    let lastY = (currentStepNum < 1) ? 0 : playData[currentStepNum - 1].y;
 
     isAutoPlay.value = true;
     isPause.value = false;
@@ -263,7 +263,7 @@
     isPreviousStep.value = true;
 
     currentStep.value -=  1;
-    if (currentStep.value == 0){
+    if (currentStep.value == 0) {
       isPreviousStep.value = false;
     }
 
@@ -276,7 +276,7 @@
       drawAction(currentPlayData, lastX, lastY)
 
       currentStep.value +=  1;
-      if (isAutoPlay.value){
+      if (isAutoPlay.value) {
         drawPlay();
       }
     }, 10);  
@@ -291,19 +291,19 @@
 
     for(let i=0; i<drawWithStepData.length; i++){
       currentPlayData = drawWithStepData[i]
-      lastX = (i<1) ? 0 : drawWithStepData[i-1].x;
-      lastY = (i<1) ? 0 : drawWithStepData[i-1].y;
+      lastX = (i < 1) ? 0 : drawWithStepData[i - 1].x;
+      lastY = (i < 1) ? 0 : drawWithStepData[i - 1].y;
 
       drawAction(currentPlayData, lastX, lastY);
     }
   }
 
   const drawAction = (currentPlayData, lastX, lastY) => {
-    if(currentPlayData.action==1){
+    if (currentPlayData.action == 1) {
       canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
     }
 
-    if(currentPlayData.action==3){
+    if (currentPlayData.action == 3) {
       canvasObj.usePen(lastX, lastY, currentPlayData.x, currentPlayData.y);
     } 
   }
