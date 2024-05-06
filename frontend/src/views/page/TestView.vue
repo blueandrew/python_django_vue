@@ -69,7 +69,7 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { apiGetWorksList } from '../../api'
-  import { formatDateString } from '../../utils/format.js'
+  import { formatDateString } from '../../utils/format'
   
   const worksList = ref([]);
 

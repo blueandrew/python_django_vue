@@ -32,10 +32,11 @@
 </template>
 
 <script setup>
+  import { initFlowbite } from 'flowbite'
   import { ref, reactive, toRaw, onMounted, onBeforeUnmount } from 'vue'
   
   import CanvasObj from '../../utils/canvasClass.js'
-  import DrawWorksToolbar from '../../components/works/DrawWorksToolbar.vue'
+  import DrawWorksToolbar from '../../components/works/DrawWorksToolbar'
 
   const toolbarInitData = {
     'penType': 1,
@@ -46,6 +47,8 @@
 
   const penTypeList = reactive([]);
   const penSizeList = reactive([]);
+  penTypeList.push(...CanvasObj.getPenTypeList());
+  penSizeList.push(...CanvasObj.getPenSizeList());
 
   const isDraw = ref(false);
   const canvasContainer = ref(null);
@@ -78,12 +81,9 @@
   }
 
   onMounted(() => {
+    initFlowbite();
     onSetCanvasInit();
-    
     canvasObj = new CanvasObj(canvas.value);
-    penTypeList.push(...canvasObj.penTypeList);
-    penSizeList.push(...canvasObj.penSizeList);
-
     addEventListener ('resize', onResize);
   })
 

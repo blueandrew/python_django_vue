@@ -1,70 +1,11 @@
-class Pen{
-   constructor(type) {
-      this.type = type;
-  }
-
-   draw() {
-      console.log(`Type: ${this.type} Color: ${this.color}`);
-   }
-}
-
-class Eraser extends Pen {
-   constructor() {
-      super('eraser');
-   }
-
-   draw(ctx, color, size, lastX, lastY) {
-      ctx.globalCompositeOperation="destination-out";
-      ctx.strokeStyle = color;
-      ctx.lineWidth = size;
-      ctx.lineCap = 'round';
-      
-      ctx.arc(lastX, lastY, size, 0, Math.PI*2, false);
-      ctx.fill();
-
-      ctx.globalCompositeOperation="source-over";
-   }
-}
-
-class Pen1 extends Pen {
-   constructor() {
-      super('pen1');
-   }
-
-   draw(ctx, color, size, lastX, lastY, x, y) {
-      ctx.globalCompositeOperation="source-over";
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = size;
-      ctx.lineCap = 'round';
-      
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-   }
-}
-
-class Pen2 extends Pen {
-   constructor() {
-      super('pen2');
-   }
-
-   draw(ctx, color, size, lastX, lastY, x, y) {
-      ctx.globalCompositeOperation="source-over";
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = size;
-      ctx.lineCap = 'round';
-      
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-
-      ctx.moveTo(lastX+10, lastY+10);
-      ctx.lineTo(x+10, y+10);
-      ctx.stroke();
-   }
-}
+import {
+   Eraser,
+   GeneralPen,
+   Pencil,
+   MarkerPen,
+   Airbrush,
+   Crayon
+} from './penClass'
 
 export default class CanvasObj{
    constructor(canvasElement){
@@ -76,19 +17,45 @@ export default class CanvasObj{
 
       this.drawData = [];
 
-      this.penTypeList = ['eraser', 'pen1', 'pen2'];
-      this.penSizeList = [5, 10];
-
-      this.color = '#000000';
-      this.size = 10;
+      this.currentPenColor = '#000000';
+      this.currentPenSize = 10;
 
       this.pens = {
          'eraser': new Eraser(), 
-         'pen1': new Pen1(),
-         'pen2': new Pen2(),
+         'generalPen': new GeneralPen(),
+         'pencil': new Pencil(),
+         'markerPen': new MarkerPen(),
+         'airbrush': new Airbrush(),
+         'crayon': new Crayon(),
       };
 
       this.currentPen = this.pens['pen1'];
+
+      this.setBackgroundColor();
+   }
+
+   static getPenTypeList(){
+      let penTypeList = ['eraser', 'generalPen', 'pencil', 'markerPen', 'airbrush', 'crayon'];
+
+      return penTypeList 
+   }
+
+   static getPenSizeList(){
+      let penTypeList = [5, 10, 15, 20];
+
+      return penTypeList 
+   }
+
+   setBackgroundColor(){
+      let imgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+      for(let i=0; i<imgData.data.length; i+=4){
+         imgData.data[i] = 255;
+         imgData.data[i+1] = 255;
+         imgData.data[i+2] = 255;
+         imgData.data[i+3] = 255;
+      }
+      
+      this.ctx.putImageData(imgData, 0, 0);
    }
 
    setCanvasSize(canvasWidth, canvasHeight){
@@ -96,17 +63,21 @@ export default class CanvasObj{
       this.canvasHeight = canvasHeight;
    }
 
-   setPenSettings(penType, color, size){
+   setPenSettings(penType, penColor, penSize){
       this.currentPen = this.pens[penType];
-      this.color = color;
-      this.size = size;
+      this.currentPenColor = penColor;
+      this.currentPenSize = penSize;
    }
 
    usePen(lastX, lastY, x, y){
       this.ctx.beginPath();
 
-      this.currentPen.draw(this.ctx, this.color, this.size, lastX, lastY, x, y);
-      
+      if(this.currentPen.type=="crayon"){
+         this.currentPen.draw(this.ctx, this.canvasWidth, this.canvasHeight, this.currentPenColor, this.currentPenSize, lastX, lastY, x, y);
+      }else{
+         this.currentPen.draw(this.ctx, this.currentPenColor, this.currentPenSize, lastX, lastY, x, y);
+      }
+
       this.ctx.save();
       this.ctx.closePath();
    }
@@ -122,7 +93,7 @@ export default class CanvasObj{
       data.y = data.y*widthScale;
       data.color = this.color;
       // data.action = data.action;
-      data.penSize = this.size*widthScale;
+      data.penSize = this.currentPenSize*widthScale;
       data.penType = this.currentPen.type;
 
       this.drawData = [...this.drawData, data];

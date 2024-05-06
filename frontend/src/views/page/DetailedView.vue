@@ -31,7 +31,7 @@
   import { ref, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { apiGetWorksDetailed } from '../../api'
-  import { formatDateString } from '../../utils/format.js'
+  import { formatDateString } from '../../utils/format'
   
   const worksData = ref([]);
 
