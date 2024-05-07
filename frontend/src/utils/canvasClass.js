@@ -42,6 +42,7 @@ export default class CanvasObj{
          {'name':'pencil', 'comment': 'Pencil'},
          {'name':'markerPen', 'comment': 'MarkerPen'},
          {'name':'airbrush', 'comment': 'Airbrush'},
+         {'name':'crayon', 'comment': 'Crayon'},
             
       ];
 
@@ -80,8 +81,9 @@ export default class CanvasObj{
    usePen(lastX, lastY, x, y){
       this.ctx.beginPath();
 
-      if(this.currentPen.type=="crayon"){
-         this.currentPen.draw(this.ctx, this.canvasWidth, this.canvasHeight, this.currentPenColor, this.currentPenSize, lastX, lastY, x, y);
+      if(this.currentPen.type=="Crayon"){
+
+         this.currentPen.draw(this.ctx, this.canvasWidth, this.canvasHeight, this.currentPenColor, this.currentPenSize, x, y);
       }else{
          this.currentPen.draw(this.ctx, this.currentPenColor, this.currentPenSize, lastX, lastY, x, y);
       }
@@ -112,7 +114,6 @@ export default class CanvasObj{
    }
 
    deleteDrawData(idx){
-      console.log(this.drawData);
       if(idx == -1){
          this.drawData = [];
          return

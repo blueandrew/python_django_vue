@@ -201,13 +201,31 @@ export class Airbrush extends Pen {
          ctx.drawImage(drawBrushImage, x, y, penSize, penSize);
       }
    }
+
+   draw_ord(ctx, color, penSize, lastX, lastY, targetX, targetY) {
+      let distanceBetweenPoints = this.getDistanceBetweenPoints(lastX, lastY, targetX, targetY);
+      let angleBetweenPoints = this.getAngleBetweenPoints(lastX, lastY, targetX, targetY);
+      let x = 0;
+      let y = 0;
+
+      let drawBrushImage = this.changeColor(color);
+      ctx.globalAlpha = this.brushAlpha * 255;
+
+      ctx.globalCompositeOperation="source-over";
+
+      for (let distnum=0; distnum<distanceBetweenPoints; distnum++) {
+         x = lastX + (Math.sin(angleBetweenPoints) * distnum);
+         y = lastY + (Math.cos(angleBetweenPoints) * distnum);
+         ctx.drawImage(drawBrushImage, x, y, penSize, penSize);
+      }
+   }
 }
 
 export class Crayon extends Pen {
    constructor() {
       super('Crayon');
       this.brushImage = new Image();
-      this.brushImage.src = require('@/assets/images/brushImage/Creyon_brush_18.png');
+      this.brushImage.src = require('@/assets/images/brushImage/Creyon_brush_18_gb15.png');
       this.comment = '蠟筆';
       this.brushAlpha = 0.4;
       this.backgroundImage = new Image();
@@ -223,8 +241,6 @@ export class Crayon extends Pen {
       
       crayonCtx.globalCompositeOperation = 'source-over';
       crayonCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-      crayonCtx.globalCompositeOperation = 'source-over';
-      crayonCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
       crayonCtx.drawImage(this.backgroundImage, 0, 0, canvasWidth, canvasHeight);
       crayonCtx.globalCompositeOperation = 'source-in';
@@ -233,22 +249,14 @@ export class Crayon extends Pen {
       return crayonCanvas
    } 
 
-   draw(ctx, canvasWidth, canvasHeight, color, penSize, lastX, lastY, targetX, targetY) {
-      let distanceBetweenPoints = this.getDistanceBetweenPoints(lastX, lastY, targetX, targetY);
-      let angleBetweenPoints = this.getAngleBetweenPoints(lastX, lastY, targetX, targetY);
-      let x = 0;
-      let y = 0;
-
+   draw(ctx, canvasWidth, canvasHeight, color, penSize, targetX, targetY) {
       let drawBrushImage = this.changeColor(color);
       ctx.globalAlpha = this.brushAlpha * 255;
 
       ctx.globalCompositeOperation="source-over";
       drawBrushImage = this.setCrayonPen(drawBrushImage, canvasWidth, canvasHeight);
 
-      for (let distnum=0; distnum<distanceBetweenPoints; distnum++) {
-         x = lastX + (Math.sin(angleBetweenPoints) * distnum);
-         y = lastY + (Math.cos(angleBetweenPoints) * distnum);
-         ctx.drawImage(drawBrushImage, x, y, penSize, penSize);
-      }
+      ctx.drawImage(drawBrushImage, targetX, targetY, penSize*10, penSize*10);
+
    }
 }

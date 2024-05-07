@@ -172,7 +172,6 @@
 
   const mouseUpStepIndexList = defineModel('mouseUpStepIndexList');
   const currentStep = defineModel('currentStep');
-  console.log(penSizeList);
   const emit = defineEmits(['clearCanvas', 'saveWorks', 'undo', 'redo']);
   const clearCanvas = () => emit('clearCanvas');
   const saveWorks = () => emit('saveWorks');
