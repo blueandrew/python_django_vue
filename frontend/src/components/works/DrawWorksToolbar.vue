@@ -54,11 +54,11 @@
 			<button data-tooltip-target="tooltip-bottom_pen" data-tooltip-placement="bottom" type="button" id="dropdownPenTypeButton" data-modal-target="dropdownPenType" data-modal-toggle="dropdownPenType" class="me-3 mb-3 md:mb-0 text-coolGray-700 border border-coolGray-700 hover:bg-gray-200 hover:text-white focus:outline-none font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center">
 				<SvgComponents 
 					:svgSize=24
-					:svgName=penTypeList[toolbarData.penType]
+					:svgName=penTypeInfo[toolbarData.penType].name
 				/>
 			</button>
 			<div id="tooltip-bottom_pen" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-				{{ penTypeList[toolbarData.penType] }}
+				{{ penTypeInfo[toolbarData.penType].comment }}
 				<div class="tooltip-arrow" data-popper-arrow></div>
 			</div>
 
@@ -80,21 +80,20 @@
 							</button>
 						</div>
 						<!-- Modal body -->
-						<ul class="p-3 space-y-1 text-sm text-gray-700" aria-labelledby="dropdownPenTypeButton">
-							<li v-for='(penName, penIndex) in penTypeList' :key=penIndex >
+						<ul class="p-3 space-y-1 text-sm text-gray-700 overflow-y-auto h-80 " aria-labelledby="dropdownPenTypeButton">
+							<li v-for='(penType, penIndex) in penTypeInfo' :key=penIndex >
 								<div class="flex p-2 rounded">
 									<div class="flex items-center h-5">
 										<input name="helper-radio" type="radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" :value=penIndex v-model='toolbarData.penType'>
 									</div>
-									<div class="ms-2 text-sm" :data-tooltip-target="'tooltip-bottom_' + penName" data-tooltip-placement="bottom">
+									<div class="ms-2 text-sm" :data-tooltip-target="'tooltip-bottom_' + penType.name" data-tooltip-placement="bottom">
 										<SvgComponents 
 											:svgSize=24
-											:svgName=penName
+											:svgName=penType.name
 										/>
 									</div>
-
-									<div :id="'tooltip-bottom_'+penName" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-										{{ penName }}
+									<div :id="'tooltip-bottom_'+penType.name" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+										{{ penType.name }}
 										<div class="tooltip-arrow" data-popper-arrow></div>
 									</div>
 								</div>
@@ -168,7 +167,7 @@
   import SvgComponents from '../SvgComponents.vue'
 
   const toolbarData = defineModel('toolbarData');
-  const penTypeList = defineModel('penTypeList');
+  const penTypeInfo = defineModel('penTypeInfo');
   const penSizeList = defineModel('penSizeList');
 
   const mouseUpStepIndexList = defineModel('mouseUpStepIndexList');

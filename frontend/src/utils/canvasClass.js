@@ -34,10 +34,18 @@ export default class CanvasObj{
       this.setBackgroundColor();
    }
 
-   static getPenTypeList(){
-      let penTypeList = ['eraser', 'generalPen', 'pencil', 'markerPen', 'airbrush', 'crayon'];
+   static getPenTypeInfo(){
+      // let penTypeInfo = ['eraser', 'generalPen', 'pencil', 'markerPen', 'airbrush', 'crayon'];
+      let penTypeInfo = [
+         {'name':'eraser', 'comment': 'Eraser'},
+         {'name':'generalPen', 'comment': 'GeneralPen'},
+         {'name':'pencil', 'comment': 'Pencil'},
+         {'name':'markerPen', 'comment': 'MarkerPen'},
+         {'name':'airbrush', 'comment': 'Airbrush'},
+            
+      ];
 
-      return penTypeList 
+      return penTypeInfo
    }
 
    static getPenSizeList(){

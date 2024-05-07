@@ -19,7 +19,7 @@
          v-model:toolbarData="toolbarData"
          :mouseUpStepIndexList="mouseUpStepIndexList"
          :currentStep="currentStep"
-         :penTypeList="penTypeList"
+         :penTypeInfo="penTypeInfo"
          :penSizeList="penSizeList"
          @clearCanvas="clearCanvas"
          @saveWorks="saveWorks"
@@ -45,9 +45,9 @@
   };
   const toolbarData = reactive(toolbarInitData);
 
-  const penTypeList = reactive([]);
+  const penTypeInfo = reactive([]);
   const penSizeList = reactive([]);
-  penTypeList.push(...CanvasObj.getPenTypeList());
+  penTypeInfo.push(...CanvasObj.getPenTypeInfo());
   penSizeList.push(...CanvasObj.getPenSizeList());
 
   const isDraw = ref(false);
@@ -103,7 +103,7 @@
       mouseUpStepIndexList.value = mouseUpStepIndexList.value.slice(0, currentStep.value+1);
     }
 
-    canvasObj.setPenSettings(penTypeList[toolbarData.penType], toolbarData.color, penSizeList[toolbarData.penSize]);
+    canvasObj.setPenSettings(penTypeInfo[toolbarData.penType].name, toolbarData.color, penSizeList[toolbarData.penSize]);
     canvasObj.addDrawData({
       "x": lastX,
       "y": lastY,
