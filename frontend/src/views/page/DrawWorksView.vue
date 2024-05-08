@@ -85,7 +85,7 @@
     initFlowbite();
     onSetCanvasInit();
     canvasObj = new CanvasObj(canvas.value);
-    canvasRect = canvasObj.getBoundingClientRect();
+    canvasRect = canvas.value.getBoundingClientRect();
     addEventListener ('resize', onResize);
   })
 
