@@ -59,6 +59,7 @@
   const currentStep = ref(-1);
 
   let canvasObj = null;
+  let canvasRect = null;
   let lastX = 0;
   let lastY = 0;
 
@@ -94,8 +95,8 @@
   const mouseDown = (e) => {
     isDraw.value = true;
 
-    lastX = e.offsetX;
-    lastY = e.offsetY;
+    lastX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
+    lastY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
 
     if ((mouseUpStepIndexList.value.length-1) > currentStep.value) {
       canvasObj.deleteDrawData(mouseUpStepIndexList.value[currentStep.value]);
@@ -116,8 +117,8 @@
   const mouseUp = (e) => {
     isDraw.value = false;
 
-    lastX = e.offsetX;
-    lastY = e.offsetY;
+    lastX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
+    lastY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
 
     canvasObj.addDrawData({
       "x": lastX,
@@ -137,9 +138,13 @@
       return
     }
 
-    canvasObj.usePen(lastX, lastY, e.offsetX, e.offsetY);
-    lastX = e.offsetX;
-    lastY = e.offsetY;
+    let offsetX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
+    let offsetY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
+
+    canvasObj.usePen(lastX, lastY, offsetX, offsetY);
+    
+    lastX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
+    lastY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
 
     canvasObj.addDrawData({
       "x": lastX,
