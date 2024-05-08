@@ -85,6 +85,7 @@
     initFlowbite();
     onSetCanvasInit();
     canvasObj = new CanvasObj(canvas.value);
+    canvasRect = canvasObj.getBoundingClientRect();
     addEventListener ('resize', onResize);
   })
 
@@ -95,8 +96,8 @@
   const mouseDown = (e) => {
     isDraw.value = true;
 
-    lastX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
-    lastY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
+    lastX = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.left : e.offsetX;
+    lastY = (e.type=='touchmove') ? e.touches[0].clientY - canvasRect.top : e.offsetY;
 
     if ((mouseUpStepIndexList.value.length-1) > currentStep.value) {
       canvasObj.deleteDrawData(mouseUpStepIndexList.value[currentStep.value]);
@@ -117,8 +118,8 @@
   const mouseUp = (e) => {
     isDraw.value = false;
 
-    lastX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
-    lastY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
+    lastX = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.left : e.offsetX;
+    lastY = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.top : e.offsetY;
 
     canvasObj.addDrawData({
       "x": lastX,
@@ -138,13 +139,13 @@
       return
     }
 
-    let offsetX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
-    let offsetY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
+    let offsetX = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.left : e.offsetX;
+    let offsetY = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.top : e.offsetY;
 
     canvasObj.usePen(lastX, lastY, offsetX, offsetY);
     
-    lastX = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.left : e.offsetX;
-    lastY = (e.type=='touchmove') ? e.touches[0].canvasRect - canvasRect.top : e.offsetY;
+    lastX = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.left : e.offsetX;
+    lastY = (e.type=='touchmove') ? e.touches[0].clientX - canvasRect.top : e.offsetY;
 
     canvasObj.addDrawData({
       "x": lastX,
