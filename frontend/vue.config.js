@@ -2,6 +2,7 @@ const { defineConfig } = require('@vue/cli-service')
 const webpack = require('webpack');
 
 module.exports = defineConfig({
+  publicPath: process.env.NODE_ENV === 'gitHub' ? process.env.PUBLIC_PATH : '/',
   transpileDependencies: true,
   assetsDir: 'static',
   configureWebpack: {
@@ -17,5 +18,4 @@ module.exports = defineConfig({
       title: "Vue Project-Blog",
     },
   },
-  
 })
