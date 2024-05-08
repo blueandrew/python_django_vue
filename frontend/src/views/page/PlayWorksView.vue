@@ -6,7 +6,7 @@
         <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Draw Works</h2>
       </div>
       <div class="text-center" ref="canvasContainer">
-        <canvas class="mx-auto border border-gray-200 " width="600" height="600"
+        <canvas class="mx-auto border border-gray-200 "
           ref="canvas"
         />
       </div>
@@ -136,19 +136,19 @@
   const currentStep = ref(0);
 
   const onSetCanvasInit= () => {
-    canvas.value.width = 600;
-    canvas.value.height = 600;
-  };
-  
-  let onResize = () => {
     const rect = canvasContainer.value.getBoundingClientRect();
 
-    if (rect.width < 768){
+    if (rect.width < 768) {
       canvas.value.width = rect.width;
       canvas.value.height = rect.width;
     }else{
-      onSetCanvasInit();
+      canvas.value.width = 600;
+      canvas.value.height = 600;
     }
+  };
+
+  let onResize = () => {
+    onSetCanvasInit();
 
     canvasObj.setCanvasSize(canvas.value.width, canvas.value.height)
   }
