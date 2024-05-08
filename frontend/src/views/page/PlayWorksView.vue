@@ -301,6 +301,7 @@
   }
 
   const drawAction = (currentPlayData, lastX, lastY) => {
+
     if (currentPlayData.action == 1) {
       canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
     }

@@ -21,15 +21,15 @@ export default class CanvasObj{
       this.currentPenSize = 10;
 
       this.pens = {
-         'eraser': new Eraser(), 
-         'generalPen': new GeneralPen(),
-         'pencil': new Pencil(),
-         'markerPen': new MarkerPen(),
-         'airbrush': new Airbrush(),
-         'crayon': new Crayon(),
+         'Eraser': new Eraser(), 
+         'GeneralPen': new GeneralPen(),
+         'Pencil': new Pencil(),
+         'MarkerPen': new MarkerPen(),
+         'Airbrush': new Airbrush(),
+         'Crayon': new Crayon(),
       };
 
-      this.currentPen = this.pens['pen1'];
+      this.currentPen = this.pens['generalPen'];
 
       this.setBackgroundColor();
    }
@@ -37,12 +37,12 @@ export default class CanvasObj{
    static getPenTypeInfo(){
       // let penTypeInfo = ['eraser', 'generalPen', 'pencil', 'markerPen', 'airbrush', 'crayon'];
       let penTypeInfo = [
-         {'name':'eraser', 'comment': 'Eraser'},
-         {'name':'generalPen', 'comment': 'GeneralPen'},
-         {'name':'pencil', 'comment': 'Pencil'},
-         {'name':'markerPen', 'comment': 'MarkerPen'},
-         {'name':'airbrush', 'comment': 'Airbrush'},
-         {'name':'crayon', 'comment': 'Crayon'},
+         {'name':'Eraser', 'comment': 'Eraser'},
+         {'name':'GeneralPen', 'comment': 'GeneralPen'},
+         {'name':'Pencil', 'comment': 'Pencil'},
+         {'name':'MarkerPen', 'comment': 'MarkerPen'},
+         {'name':'Airbrush', 'comment': 'Airbrush'},
+         {'name':'Crayon', 'comment': 'Crayon'},
             
       ];
 
@@ -80,7 +80,7 @@ export default class CanvasObj{
 
    usePen(lastX, lastY, x, y){
       this.ctx.beginPath();
-
+      
       if(this.currentPen.type=="Crayon"){
 
          this.currentPen.draw(this.ctx, this.canvasWidth, this.canvasHeight, this.currentPenColor, this.currentPenSize, x, y);
@@ -101,7 +101,7 @@ export default class CanvasObj{
 
       data.x = data.x*widthScale;
       data.y = data.y*widthScale;
-      data.color = this.color;
+      data.color = this.currentPenColor;
       // data.action = data.action;
       data.penSize = this.currentPenSize*widthScale;
       data.penType = this.currentPen.type;

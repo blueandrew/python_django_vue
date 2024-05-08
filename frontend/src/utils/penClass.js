@@ -52,7 +52,7 @@ class Pen{
 
 export class Eraser extends Pen {
    constructor() {
-      super('eraser');
+      super('Eraser');
       this.brushImage = new Image();
       this.brushImage.src = require('@/assets/images/brushImage/eraser.png');
       this.comment = '橡皮擦';
@@ -93,7 +93,7 @@ export class Eraser extends Pen {
 
 export class GeneralPen extends Pen {
    constructor() {
-      super('generalPen');
+      super('GeneralPen');
       this.brushImage = new Image();
       this.brushImage.src = require('@/assets/images/brushImage/InkPen_brush_01.png');
       this.comment = '一般筆';
@@ -121,7 +121,7 @@ export class GeneralPen extends Pen {
 
 export class Pencil extends Pen {
    constructor() {
-      super('pencil');
+      super('Pencil');
       this.brushImage = new Image();
       this.brushImage.src = require('@/assets/images/brushImage/SoftPencil_brush_04.png');
       this.comment = '鉛筆';
