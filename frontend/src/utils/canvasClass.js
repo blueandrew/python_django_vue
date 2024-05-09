@@ -130,4 +130,51 @@ export default class CanvasObj{
 
       return saveDrawData
    }
+
+   getImageUrlByData(){
+      let imageUrl = '';
+      
+      if (this.drawData.length<1){
+         return imageUrl
+      }
+      
+      let tempCanvas = document.createElement('canvas');
+      tempCanvas.width = this.canvasWidth;
+      tempCanvas.height = this.canvasHeight;
+
+      let tempctx = tempCanvas.getContext('2d');
+
+      let lastX = 0;
+      let lastY = 0;
+      let currentPlayData = '';
+
+      for (let idx in this.drawData){
+         currentPlayData = this.drawData[idx];
+
+         if (currentPlayData.action == 1) {
+            this.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
+         }
+
+         if (currentPlayData.action == 3) {
+            tempctx.beginPath();
+      
+            if(this.currentPen.type=="Crayon"){
+               this.currentPen.draw(tempctx, this.canvasWidth, this.canvasHeight, this.currentPenColor, this.currentPenSize, currentPlayData.x, currentPlayData.y);
+            }else{
+               this.currentPen.draw(tempctx, this.currentPenColor, this.currentPenSize, lastX, lastY, currentPlayData.x, currentPlayData.y);
+            }
+
+            tempctx.save();
+            tempctx.closePath();
+         }
+
+         lastX = currentPlayData.x;
+         lastY = currentPlayData.y;
+      }
+
+      imageUrl = tempCanvas.toDataURL();
+      tempCanvas.remove();
+
+      return imageUrl
+   }
 }

@@ -6,9 +6,8 @@
         <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Draw Works</h2>
       </div>
       <div class="text-center" ref="canvasContainer">
-        <canvas class="mx-auto border border-gray-200 "
-          ref="canvas"
-        />
+        <img id='drawImage' class="mx-auto border border-gray-200" v-show="isShowDrawImage"/>
+        <canvas class="mx-auto border border-gray-200" ref="canvas" v-show="!isShowDrawImage"/>
       </div>
       
       <ShowWorksToolbar
@@ -37,6 +36,7 @@
   import CanvasObj from '../../utils/canvasClass.js'
   import ShowWorksToolbar from '../../components/works/ShowWorksToolbar'
 
+  const isShowDrawImage = ref(true);
   const isRefresh = ref(false);
   const isPlayEnd = ref(false);
   const isAutoPlay = ref(false);
@@ -157,6 +157,13 @@
     initFlowbite();
     onSetCanvasInit();
     canvasObj = new CanvasObj(canvas.value);
+    let playData = convertDrawData(toRaw(drawData).data);
+
+    canvasObj.upDateDrawData(playData);
+
+    let drawImage = document.getElementById('drawImage');
+    drawImage.src = canvasObj.getImageUrlByData();
+
     addEventListener ('resize', onResize);
   })
 
@@ -173,13 +180,21 @@
       canvas.value.width = drawData.width;
       canvas.value.height = drawData.height;
 
+      let playData = convertDrawData(toRaw(drawData).data);
+      canvasObj.upDateDrawData(playData);
+
+      let drawImage = document.getElementById('drawImage');
+      drawImage.src = canvasObj.getImageUrlByData();
+
       drawPlayRefresh();
-      drawPlay();
+      // drawPlay();
     };
     reader.readAsText(file);
   }
 
   const openWorks = () => {
+    drawPause();
+
     let input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
@@ -198,9 +213,12 @@
     isPause.value = true;
     isNextStep.value = true;
     isPreviousStep.value= false;
+    isShowDrawImage.value = true;
   }
 
   const drawPlay = () => {
+    isShowDrawImage.value = false;
+    
     if (currentStep.value >= drawData.data.length){
       isPlayEnd.value = true;
       isRefresh.value = true;
@@ -208,7 +226,6 @@
       isPause.value = true;
       isNextStep.value = false;
       isPreviousStep.value = true;
-
       return
     }
 
@@ -275,10 +292,10 @@
 
   const draw = (currentStepNum, currentPlayData, lastX, lastY) => {
     setTimeout(function(){
-      drawAction(currentPlayData, lastX, lastY)
-
-      currentStep.value +=  1;
       if (isAutoPlay.value) {
+        drawAction(currentPlayData, lastX, lastY);
+
+        currentStep.value +=  1;
         drawPlay();
       }
     }, 10);  

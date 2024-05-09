@@ -30,9 +30,11 @@ class Pen{
       let b = parseInt(color.slice(5, 7), 16);
       
       let imgCanvas = document.createElement('canvas');
-      imgCanvas.width = this.brushImage.width;
-      imgCanvas.height = this.brushImage.height;
-
+      this.brushImage.onload = () => {
+         imgCanvas.width = this.brushImage.width;
+         imgCanvas.height = this.brushImage.height;
+      }
+      
       let imgCtx = imgCanvas.getContext('2d');
       imgCtx.clearRect(0, 0, imgCanvas.width, imgCanvas.height);
       imgCtx.drawImage(this.brushImage, 0, 0);
