@@ -12,8 +12,8 @@ export default class CanvasObj{
       this.canvas = canvasElement
       this.ctx = this.canvas.getContext('2d', {willReadFrequently:true});
 
-      this.canvasWidth = 600;
-      this.canvasHeight = 600;
+      this.canvasWidth = this.canvas.width;
+      this.canvasHeight = this.canvas.height;
 
       this.drawData = [];
 
@@ -82,7 +82,6 @@ export default class CanvasObj{
       this.ctx.beginPath();
       
       if(this.currentPen.type=="Crayon"){
-
          this.currentPen.draw(this.ctx, this.canvasWidth, this.canvasHeight, this.currentPenColor, this.currentPenSize, x, y);
       }else{
          this.currentPen.draw(this.ctx, this.currentPenColor, this.currentPenSize, lastX, lastY, x, y);
@@ -171,7 +170,6 @@ export default class CanvasObj{
          lastX = currentPlayData.x;
          lastY = currentPlayData.y;
       }
-
       imageUrl = tempCanvas.toDataURL();
       tempCanvas.remove();
 

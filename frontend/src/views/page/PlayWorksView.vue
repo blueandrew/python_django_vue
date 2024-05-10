@@ -3,12 +3,12 @@
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
      
       <div class="mx-auto max-w-screen-sm text-center lg:mb-8 mb-4">
-        <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Draw Works</h2>
+        <h2 class="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900">Play Works</h2>
       </div>
-      <div class="text-center" ref="canvasContainer">
-        <img id='drawImage' class="mx-auto border border-gray-200" v-show="isShowDrawImage"/>
-        <canvas class="mx-auto border border-gray-200" ref="canvas" v-show="!isShowDrawImage"/>
-      </div>
+      <div class="text-center" ref="canvasContainer" >
+        <img id='drawImage' class=" border border-gray-200 mx-auto" v-show="isShowDrawImage"/>
+        <canvas class="mx-auto border border-gray-200" ref="canvas" v-show="!isShowDrawImage" />
+      </div>      
       
       <ShowWorksToolbar
         :isRefresh="isRefresh"
@@ -133,6 +133,7 @@
   }
 
   const drawData = reactive(drawDataJson);
+
   const currentStep = ref(0);
 
   const onSetCanvasInit= () => {
@@ -142,15 +143,15 @@
       canvas.value.width = rect.width;
       canvas.value.height = rect.width;
     }else{
-      canvas.value.width = 600;
-      canvas.value.height = 600;
+      canvas.value.width = drawData.width;
+      canvas.value.height = drawData.width;
     }
   };
 
   let onResize = () => {
     onSetCanvasInit();
-
-    canvasObj.setCanvasSize(canvas.value.width, canvas.value.height)
+  
+    canvasObj.setCanvasSize(canvas.value.width, canvas.value.height);
   }
   
   onMounted(() => {
@@ -163,7 +164,6 @@
 
     let drawImage = document.getElementById('drawImage');
     drawImage.src = canvasObj.getImageUrlByData();
-
     addEventListener ('resize', onResize);
   })
 
@@ -172,13 +172,15 @@
   })
 
   const readSelectedJSON = (event) => {
+    const rect = canvasContainer.value.getBoundingClientRect();
     let file = event.target.files[0];
     let reader = new FileReader();
+
     reader.onload = (event) => {
       Object.assign(drawData, JSON.parse(event.target.result));
 
-      canvas.value.width = drawData.width;
-      canvas.value.height = drawData.height;
+      canvas.value.width = rect.width;
+      canvas.value.height = rect.width;
 
       let playData = convertDrawData(toRaw(drawData).data);
       canvasObj.upDateDrawData(playData);
@@ -318,7 +320,6 @@
   }
 
   const drawAction = (currentPlayData, lastX, lastY) => {
-
     if (currentPlayData.action == 1) {
       canvasObj.setPenSettings(currentPlayData.penType, currentPlayData.color, currentPlayData.penSize);
     }
